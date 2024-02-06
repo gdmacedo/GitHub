@@ -1,67 +1,103 @@
-menu = """
+cBanko = 'DIO Bank '
+cSlogan = 'More than a bank, your bank'
+menu ='''         Seja bem-vindo ao DIO Bank!
+[S] Sacar
+[D] Depositar
+[E] Consultar extrato
+[Q] Sair
 
-[d] Depositar
-[s] Sacar
-[e] Extrato
-[q] Sair
+Selecione uma operação: '''
 
-=> """
+cOpcao = 'Início'
+nQtd_Limite_Saque = 3
+nValor_Limite_Saque = 500.0
+nSaldo = 1500.0
+nValor_Saque = nValor_Deposito = 0
+lHistorico_Dpstos = []
+lHistorico_Saques = []
+lHistorico_Saldos = [nSaldo]
 
-saldo = 0
-limite = 500
-extrato = ""
-numero_saques = 0
-LIMITE_SAQUES = 2
-
+# Dando início ao menu
 while True:
-    opcao = input(menu)
+    print('-'*41)
+    print(f'{cBanko:^41}'.upper())
+    print(f'{cSlogan:^41}')
+    print('-'*41)
+    cOpcao = str(input(menu)).upper()
+    print('-'*41)
+    
+    if cOpcao == 'S':
+        # Lógica de realização do saque
+        nValor_Saque = int(input('Valor do saque: R$ '))
+        print()
+        
+        if nQtd_Limite_Saque > 0:
+            if nValor_Saque <= nValor_Limite_Saque:
+                if nValor_Saque <= nSaldo:
+                    nQtd_Limite_Saque -= 1
+                    nSaldo -= nValor_Saque
+                    print('                SUCESSO!')
+                    print(f'       Saque de R$ {nValor_Saque:.2f} realizado')
+                    
+                    # Lógica registro no extrato
+                    lHistorico_Saques.append(nValor_Saque)
+                       
+                else:
+                    print('                  ERRO!')
+                    print('      Valor indisponível para saque')
+            else:
+                print('                  ERRO!')
+                print('       Valor de saque indisponível')
+        else:
+            print('                  ERRO!')
+            print('        Limite de saques atingido')
+        
+        print('\nRetornando ao menu...')
+        
 
-    if opcao == "d":
-      valor = float(input("Informe o valor do depósito: "))
-      
-    if valor > 0:
-          saldo += valor
-          extrato += f'Deposito: R$ {valor: .2f}\n'
+    elif cOpcao == 'D':
+        # Lógica de realização do depósito
+        nValor_Deposito = int(input('Valor do depósito: R$ '))
+        if nValor_Deposito > 0:
+            nSaldo += nValor_Deposito
+            print('\n                SUCESSO!')
+            print(f'      Depósito de R$ {nValor_Deposito:.2f} realizado')
+        else:
+            print('\nValor de depósito inválido')
+            
+        print('\nRetornando ao menu...')
+        
+        # Lógica registro no extrato
+        lHistorico_Dpstos.append(nValor_Deposito)
+    
+    elif cOpcao == 'E':
+        print(f'\n{cBanko:^41}'.upper())
+        print(f'{cSlogan:^41}')
+        print('-' * 41)
+        print('\n            Extrato da conta\n')
+        if len(lHistorico_Dpstos) == 0 and len(lHistorico_Saques) == 0:
+            print('       Nenhuma operação realizada')
+            print('-' * 41)
+        else:
+            print(f'nSaldo inicial: R$ {lHistorico_Saldos[0]:.2f}\n')
+        if len(lHistorico_Dpstos) > 0:
+            print('depósitos'.upper())
+            for deposito in lHistorico_Dpstos:
+                print(f'R$ {deposito:.2f}')
+            print('-' * 41)
+        if len(lHistorico_Saques) > 0:
+            print('saques'.upper())
+            for saque in lHistorico_Saques:
+                print(f'R$ {saque:.2f}')
+            print('-' * 41)
+        print(f'nSaldo atual da conta: R$ {nSaldo:.2f}')
+        print(f'Saques diários restantes: {nQtd_Limite_Saque}\n')
+    
+    elif cOpcao == 'Q':
+        print('      O DIO Bank agradece a preferência!')
+        print()
+        break
+    
     else:
-          print("Operação falhou! O valor informado é inválido. Tente novamente!")
-
-    if opcao == 's':
-
-        valor = float(input("Informe o valor do saque: "))
-,
-        excedeu_saldo = valor > saldo
-
-        excedeu_limite = valor > limite
-
-        excedeu_saques = numero_saques >= LIMITE_SAQUES
-      
-    if excedeu_saldo:
-        print("Operação falhou! Você não possui saldo sufuciente.")
-
-    elif excedeu_limite:
-        print("Operação falhou! O valor do saque excedeu o limite.")
-      
-    elif excedeu_saques:
-        print("Operação falhou! Número de saques foi excedido.")
-
-    elif valor > 0:
-        saldo -= valor
-
-        extrato += f'Saque: R$ {valor: .2f}\n'
-
-        numero_saques += 1
-
-    else: 
-        print("Operação falhou! O valor informado é inválido.")
-
-    if opcao == "e":
-
-        print("\n=============EXTRATO==============")
-        print("Não foram realizadas movimentações." if not extrato else extrato)
-        print(f"\nSaldo: R$ {saldo: .2f}")
-        print("===============================")        
-
-    elif opcao =="q":
-          break
-    else:
-        print("Operação inválida, por favor selecione novamente a operação desejada.")
+        print('   Operação inválida. Tente novamente')
+        print()
